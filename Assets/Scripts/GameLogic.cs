@@ -14,9 +14,14 @@ public class GameLogic : MonoBehaviour
   [SerializeField] bool inMainMenu = true;
   [SerializeField] Camera mainMenuCamera;
   [SerializeField] GameObject mainMenuObject;
+  [SerializeField] GameObject pickScrewdrivaObject;
   [SerializeField] Camera firstPlayerCamera;
   [SerializeField] GameObject firstPlayerController;
+  [SerializeField] GameObject winWaypoint;
+  [SerializeField] GameObject winMessage;
+
   private float mainMenuTimer = 0;
+  private bool nearScrewdriva = false;
   void Start()
   {
     GameObject[] toolWaypoints = GameObject.FindGameObjectsWithTag("ToolWaypoint");
@@ -35,12 +40,6 @@ public class GameLogic : MonoBehaviour
     sourceToolObjects[screwdrivaIdx].SetActive(false);
 
     gotoMainMenu();
-  }
-
-  void Update() {
-    if (inMainMenu) {
-      UpdateMainMenu();
-    }
   }
 
   public void startGame() {
@@ -63,8 +62,11 @@ public class GameLogic : MonoBehaviour
     firstPlayerController.SetActive(false);
   }
 
-  public void showPickupOption() {
+  public void showPickupOption(bool nearScrewdrivaIn) {
     Debug.Log("pickup item");
+    if (inMainMenu) { return; }
+    pickScrewdrivaObject.SetActive(nearScrewdrivaIn);
+    nearScrewdriva = nearScrewdrivaIn;
   }
 
 
@@ -88,8 +90,6 @@ public class GameLogic : MonoBehaviour
       this.mainMenuTimer += Time.deltaTime;
     } else {
       var tool = this.toolsWithPhysics[Random.Range(0, this.toolsWithPhysics.Length)];
-
-
       var rotation = new Vector3(90,0,0);
       if (tool.name == "Saw" || tool.name == "Drill") { rotation = new Vector3(90,90,0); }
 
@@ -99,6 +99,20 @@ public class GameLogic : MonoBehaviour
         Quaternion.Euler(rotation)
       );
       this.mainMenuTimer = 0;
+    }
+  }
+
+  void Update() {
+    if (inMainMenu) {
+      UpdateMainMenu();
+      return;
+    } 
+    
+    if (Input.GetKeyDown(KeyCode.E) && nearScrewdriva) {
+      showPickupOption(false);
+      firstPlayerController.transform.position = winWaypoint.transform.position;
+      firstPlayerController.transform.rotation = Quaternion.Euler(new Vector3(0,180,0));
+      winMessage.SetActive(true);
     }
   }
 }

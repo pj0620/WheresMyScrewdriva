@@ -12,8 +12,10 @@ public class PickupScript : MonoBehaviour
   }
 
   private void OnTriggerEnter(Collider other) {
-    if (other.tag == "Screwdriva") {
-      logic.showPickupOption();
-    }
+    logic.showPickupOption(other.tag == "Screwdriva");
+  }
+
+  private void OnTriggerExit(Collider other) {
+    logic.showPickupOption(false);
   }
 }
