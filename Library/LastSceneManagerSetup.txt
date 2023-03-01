@@ -1,5 +1,0 @@
-sceneSetups:
-- path: Assets/Simple Garage/Scenes/Garage Scene.unity
-  isLoaded: 1
-  isActive: 1
-  isSubScene: 0
